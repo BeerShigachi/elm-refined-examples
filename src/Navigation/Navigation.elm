@@ -1,6 +1,6 @@
 -- NavigationはリンクをクリックすることでURLを変更するコード
 
-module Navigation exposing (..)
+module Navigation.Navigation exposing (..)
 
 import Browser
 import Browser.Navigation as Nav

@@ -1,6 +1,6 @@
 -- URLParserはリンクをクリックしてURLを変更し画面遷移を行うコード
 -- NavigationにParseを追加したコード
-module URLParser exposing (..)
+module Navigation.URLParser exposing (..)
 
 import Browser
 import Browser.Navigation as Nav
