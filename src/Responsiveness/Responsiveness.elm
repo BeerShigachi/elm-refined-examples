@@ -18,17 +18,22 @@ type alias Window =
 
 type alias Model =
     { device : Device
+    , window : Window
     }
 
 initialModel : Model
 initialModel =
-    { device = Element.classifyDevice { width = 0, height = 0} }
+    let
+        window_ = { width = 0, height = 0}
+    in
+    { device = Element.classifyDevice window_
+    , window = window_ }
 
 
 -- Msg
 
 type Msg
-    = DeviceClassified Device
+    = DeviceClassified Device Window
     | GotInitialViewport Viewport
     | Nothing
 
@@ -37,19 +42,22 @@ type Msg
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     onResize <|
-        \width height ->
-            DeviceClassified (Element.classifyDevice { width = width, height = height })
+        \width_ height_ ->
+            DeviceClassified (Element.classifyDevice { width = width_, height = height_ }) { width = width_, height = height_ }
 
 -- Update
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
-        DeviceClassified device_ ->
-            ( { model | device = device_ }
+        DeviceClassified device_ window_ ->
+            ( { model | device = device_, window = window_ }
             , Cmd.none
             )
         GotInitialViewport vp ->
-            ( { device = Element.classifyDevice { width = round vp.viewport.width, height = round vp.viewport.height} }
+            let
+                window_ = { width = round vp.viewport.width, height = round vp.viewport.height}
+            in
+            ( { device = Element.classifyDevice window_ , window = window_}
               , Cmd.none
             )
         Nothing ->
@@ -61,8 +69,8 @@ view : Model -> Html Msg
 view model =
     div
         [ style "background-color" "lightblue"
-        , style "height" (String.fromInt model.device.height ++ "px")
-        , style "width" (String.fromInt model.device.width ++ "px")
+        , style "height" (String.fromInt model.window.height ++ "px")
+        , style "width" (String.fromInt model.window.width ++ "px")
         , style "display" "flex"
         , style "justify-content" "center"
         , style "align-items" "center"
