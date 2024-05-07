@@ -30,7 +30,7 @@ type alias Model =
 
 -- ナビゲーションバーから現在のUrlを取得
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
+init _ url key =
   ( Model key url, Cmd.none )
 
 -- UPDATE

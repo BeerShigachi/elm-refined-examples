@@ -7,7 +7,7 @@ import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Url
-import Url.Parser as Pars exposing (Parser, parse, (</>), map, oneOf, s, string, top)
+import Url.Parser as Pars exposing (Parser, parse, (</>), oneOf, string, top)
 
 -- MAIN
 
@@ -65,7 +65,7 @@ type alias Model =
   }
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
+init _ url key =
   ( Model key url HomePage, Cmd.none )
 
 -- UPDATE
