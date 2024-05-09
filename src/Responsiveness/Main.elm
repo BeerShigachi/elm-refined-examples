@@ -1,14 +1,11 @@
 module Responsiveness.Main exposing (..)
-
 import Browser
 import Html exposing (Html)
 import Browser.Events exposing (onResize)
-import Browser.Dom exposing (Viewport)
 import Task
 import Element 
     exposing
         ( Attribute
-        , Device
         , DeviceClass(..)
         , Element
         , Orientation(..)
@@ -29,32 +26,31 @@ import Element
         )
 import Element.Background as Background
 import Element.Region as Region
+import Responsiveness.Types exposing (..)
+import Browser.Dom
 
 
--- Model
-
-type alias Model = Device
 
 
-init : () -> ( Device, Cmd Msg )
+
+
+init : () -> ( Model, Cmd Msg )
 init _ =
     let
+        device = Element.classifyDevice { width = 0, height = 0}
+        
         handleResult v =
             case v of
                 Err _ ->
-                    Nothing
+                    DeviceClassified device
 
                 Ok vp ->
                     GotInitialViewport vp
     in
-    (Element.classifyDevice { width = 0, height = 0}, Task.attempt handleResult Browser.Dom.getViewport)
+    (device, Task.attempt handleResult Browser.Dom.getViewport)
     
 
--- Msg
-type Msg
-    = DeviceClassified Device
-    | GotInitialViewport Viewport
-    | Nothing
+
 
 -- Subscriptions
 
@@ -66,18 +62,17 @@ subscriptions _ =
 
 -- Update
 update : Msg -> Model -> ( Model, Cmd msg )
-update msg model =
+update msg _ =
     case msg of
-        DeviceClassified device_ ->
-            ( device_
+        DeviceClassified device ->
+            ( device
             , Cmd.none
             )
         GotInitialViewport vp ->
             ( Element.classifyDevice { width = round vp.viewport.width, height = round vp.viewport.height}
               , Cmd.none
             )
-        Nothing ->
-            (model, Cmd.none)
+
 
 -- View
 
