@@ -37,11 +37,7 @@ type alias Model = Device
 
 initialModel : Model
 initialModel =
-    let
-        window_ = { width = 0, height = 0}
-    in
-    Element.classifyDevice window_
-
+    Element.classifyDevice { width = 0, height = 0}
 
 -- Msg
 type Msg
