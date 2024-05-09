@@ -1,4 +1,4 @@
-module Responsiveness.Responsiveness exposing (..)
+module Responsiveness.Main exposing (..)
 
 import Browser
 import Html exposing (Html)
