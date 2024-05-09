@@ -6,8 +6,8 @@ import Element.Background as Background
 import Element.Region as Region
 import Responsiveness.Types exposing (..)
 
--- View
 
+-- View
 view : Model -> Html Msg
 view model =
     case ( model.class, model.orientation ) of
@@ -26,6 +26,8 @@ view model =
         ( BigDesktop, _ ) ->
             bigDesktopLayout
 
+
+-- Layouts
 phoneLayout : Html Msg
 phoneLayout =
     layout [ height fill, width fill, inFront <| header []]
@@ -76,6 +78,7 @@ bigDesktopLayout =
     desktopLayout
 
 
+-- Elements
 header : List (Attribute Msg) -> Element Msg
 header attr =
     el
