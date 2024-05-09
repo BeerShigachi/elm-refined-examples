@@ -33,11 +33,6 @@ import Element.Region as Region
 
 -- Model
 
-type alias Window =
-    { width : Int
-    , height : Int
-    }
-
 type alias Model = Device
 
 initialModel : Model
