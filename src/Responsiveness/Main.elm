@@ -35,9 +35,20 @@ import Element.Region as Region
 
 type alias Model = Device
 
-initialModel : Model
-initialModel =
-    Element.classifyDevice { width = 0, height = 0}
+
+init : () -> ( Device, Cmd Msg )
+init _ =
+    let
+        handleResult v =
+            case v of
+                Err _ ->
+                    Nothing
+
+                Ok vp ->
+                    GotInitialViewport vp
+    in
+    (Element.classifyDevice { width = 0, height = 0}, Task.attempt handleResult Browser.Dom.getViewport)
+    
 
 -- Msg
 type Msg
@@ -224,17 +235,8 @@ footer attr =
 -- Main
 main : Program () Model Msg
 main =
-    let
-        handleResult v =
-            case v of
-                Err _ ->
-                    Nothing
-
-                Ok vp ->
-                    GotInitialViewport vp
-    in
     Browser.element
-        { init = \_ -> (initialModel, Task.attempt handleResult Browser.Dom.getViewport)
+        { init = init
         , update = update
         , view = view
         , subscriptions = subscriptions
