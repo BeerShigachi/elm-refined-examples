@@ -5,6 +5,7 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Region as Region
 import Responsiveness.Types exposing (..)
+import Responsiveness.Color exposing (..)
 
 
 -- View
@@ -82,7 +83,7 @@ bigDesktopLayout =
 header : List (Attribute Msg) -> Element Msg
 header attr =
     el
-        ([ Background.color <| rgb255 255 99 71 -- red
+        ([ Background.color <| tomato
          , padding 15
          , width fill
          ]
@@ -94,7 +95,7 @@ header attr =
 menu : List (Attribute Msg) -> Element Msg
 menu attr =
     el
-        ([ Background.color <| rgb255 0 255 128 -- green?
+        ([ Background.color <| lightgreen
          , padding 15
          , width fill
          , Region.navigation
@@ -107,7 +108,7 @@ menu attr =
 content : List (Attribute Msg) -> Element Msg
 content attr =
     el
-        ([ Background.color <| rgb255 224 224 224 --light gray i hope
+        ([ Background.color <| lightgray
          , padding 15
          , width fill
          , height fill
@@ -140,7 +141,7 @@ content attr =
 related : List (Attribute Msg) -> Element Msg
 related attr =
     el
-        ([ Background.color <| rgb255 255 255 51 -- yellow
+        ([ Background.color <| gold
          , padding 15
          , width fill
          , Region.aside
@@ -153,7 +154,7 @@ related attr =
 footer : List (Attribute Msg) -> Element Msg
 footer attr =
     el
-        ([ Background.color <| rgb255 255 99 71 --red
+        ([ Background.color <| hotpink
          , padding 15
          , width fill
          , Region.footer
