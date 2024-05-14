@@ -25,3 +25,8 @@ lightgreen =
 hotpink : Color
 hotpink =
     rgb255 255 105 180
+
+
+lightgray : Color
+lightgray =
+    rgb255 224 224 224
