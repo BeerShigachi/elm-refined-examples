@@ -1,7 +1,8 @@
-Run this responsiveness example
+Run this example
 
-1. `cd Responsiveness`
+```
+cd Responsiveness
+elm reactor
+```
 
-2. `elm reactor`
-
-3. see localhost 8000
+Go to localhost 8000
