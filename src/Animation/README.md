@@ -1,9 +1,9 @@
 # Animation with elm-ui
 
-Run
+Run this example
 
-`cd Animation`
-
-`elm reactor`
-
-see localhost 8000
+```
+cd Animation
+elm reactor
+```
+Go to localhost 8000
