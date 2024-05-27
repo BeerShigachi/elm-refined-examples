@@ -1,19 +1,31 @@
 module Animation.Types exposing (..)
 
-import Element exposing (Device)
 import Browser.Dom exposing (Viewport)
+import Animator
+import Dict exposing (Dict)
+import Element exposing (..)
+import Element.Events exposing (..)
+import Time
 
 
-type Https = Https String -- TODO replace with URL lib. https://package.elm-lang.org/packages/elm/url/latest/
+type State
+    = Default
+    | Hover
 
 
-type Path = Path String -- TODO replace with Path module. check examples/URLParser.elm
-
-
-type alias Model = Device
+type alias Id =
+    String
 
 
 type Msg
-    = DeviceClassified Device
+    = RuntimeTriggeredAnimationStep Time.Posix
+    | UserHoveredButton Id
+    | UserUnhoveredButton Id
+    | DeviceClassified Device
     | GotInitialViewport Viewport
-    | UserPressedButton -- TODO route page or do something
+
+
+type alias Model =
+    { device : Device
+    , buttonStates : Animator.Timeline (Dict Id State) 
+    }

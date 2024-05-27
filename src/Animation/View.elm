@@ -1,139 +1,102 @@
 module Animation.View exposing (..)
 
-
-import Animation.Color exposing (..)
-import Html exposing (Html)
+import Animator
+import Color
+import Dict
 import Element exposing (..)
-import Animation.Types exposing (..)
 import Element.Background as Background
-import Element.Region as Region
 import Element.Border as Border
-import Element.Input as Input
+import Element.Events exposing (..)
+import Element.Font as Font
+import Element.Region as Region
+import Html exposing (Html)
+import Animation.Types exposing (..)
 
 
---View
+-- View
 view : Model -> Html Msg
 view model =
-    case ( model.class, model.orientation ) of
+    case ( model.device.class, model.device.orientation ) of
         ( Phone, _ ) ->
-            phoneLayout
+            phoneLayout model
 
         ( Tablet, _ ) ->
-            tabletLayout
+            tabletLayout model
 
         ( Desktop, Portrait ) ->
-            tabletLayout
+            tabletLayout model
 
         ( Desktop, _ ) ->
-            desktopLayout
+            desktopLayout model
 
         ( BigDesktop, _ ) ->
-            bigDesktopLayout
+            bigDesktopLayout model
 
 
 -- Layouts
-phoneLayout : Html Msg
-phoneLayout =
+phoneLayout : Model -> Html Msg
+phoneLayout model =
     layout [ height fill, width fill, inFront <| header []]
         <| column [ height fill, width fill ]
             [ header []
             , menu []
             , content []
-            , content []
-            , content []
-            , content []
-            , related []
+            , animatedContent [] model
+            , animatedButtons model buttonLabels
+            , animatedButton model firstLable
             , footer []
             ]
 
 
-tabletLayout : Html Msg
-tabletLayout =
-    layout [ height fill, width fill, inFront <| header [] ] 
+tabletLayout : Model -> Html Msg
+tabletLayout model =
+    layout [ height fill, width fill ] 
         <| column [ height fill, width fill ]
             [ header []
-            , menu []
-            , content []
-            , content []
-            , content []
             , row [ width fill ]
-                [ menu []
-                , related []
+                [ content []
+                , animatedContent [] model
                 ]
             , footer []
             ]
 
 
-desktopLayout : Html Msg
-desktopLayout =
-    layout [ height fill, width fill, inFront <| header [] ] 
+desktopLayout : Model -> Html Msg
+desktopLayout model =
+    layout [ height fill, width fill ] 
         <| column [ height fill, width fill ]
             [ header []
-            , menu []
-            , content []
+            , row [ height fill ]
+                [ menu [ width (fillPortion 1), height fill ]
+                , animatedContent [ width (fillPortion 1), height fill ] model
+                , content [ width (fillPortion 3), height fill ]
+                ]
             , footer []
             ]
 
 
-bigDesktopLayout : Html Msg
+bigDesktopLayout : Model -> Html Msg
 bigDesktopLayout =
     desktopLayout
 
 
 -- Elements
-
-logo : Element msg
-logo =
-    el
-        [ width <| px 80
-        , height <| px 40
-        , Border.width 2
-        , Border.rounded 6
-        , Border.color bgPrimary
-        ]
-        -- TODO replace none with logo img
-        none 
-        
-
-headerButton : String -> Element Msg
-headerButton label_ =
-        Input.button
-            [ focused [] -- this can removed global blue shadow around on clock
-            , padding 10
-            , Background.color primary
-
-            -- The order of mouseDown/mouseOver can be significant when changing
-            -- the same attribute in both
-            , mouseDown
-                [ Background.color secondary ]
-            , mouseOver
-                [ Background.color white ]
-            ]
-            { onPress = Just UserPressedButton, label = text label_ }
-
-
 header : List (Attribute Msg) -> Element Msg
 header attr =
     el
-        ([ Background.color <| primary
+        ([ Background.color <| fromRgb <| Color.toRgba <| Color.blue
+         , padding 15
          , width fill
          ]
             ++ attr
         )
-        (row 
-            [ width fill, padding 20, spacing 20]
-            [ logo
-            , el [ alignRight ] <| headerButton "Service"
-            , el [ alignRight ] <| headerButton "About"
-            , el [ alignRight ] <| headerButton "Contact"
-            ]
-        )
+        (Element.text "Header")
 
 
 menu : List (Attribute Msg) -> Element Msg
 menu attr =
     el
-        ([ Background.color <| secondary
+        ([ Background.color <| fromRgb <| Color.toRgba <| Color.blue
          , padding 15
          , width fill
          , Region.navigation
@@ -146,7 +109,7 @@ menu attr =
 content : List (Attribute Msg) -> Element Msg
 content attr =
     el
-        ([ Background.color <| white
+        ([ Background.color <| fromRgb <| Color.toRgba <| Color.lightGray
          , padding 15
          , width fill
          , height fill
@@ -176,23 +139,24 @@ content attr =
             ]
 
 
-related : List (Attribute Msg) -> Element Msg
-related attr =
+animatedContent : List (Attribute Msg) -> Model -> Element Msg
+animatedContent attr model =
     el
-        ([ Background.color <| secondary
+        ([ Background.color <| fromRgb <| Color.toRgba <| Color.lightGray
          , padding 15
          , width fill
-         , Region.aside
+         , height fill
+         , Region.mainContent
          ]
             ++ attr
         )
-        (text "Related content")
+        <| animatedButtons model buttonLabels
 
 
 footer : List (Attribute Msg) -> Element Msg
 footer attr =
     el
-        ([ Background.color <| primary
+        ([ Background.color <| fromRgb <| Color.toRgba <| Color.purple
          , padding 15
          , width fill
          , Region.footer
@@ -200,3 +164,78 @@ footer attr =
             ++ attr
         )
         (text "Footer")
+
+
+firstLable : String
+firstLable = "Un"
+
+secondLable : String
+secondLable = "Deux"
+
+thirdLable : String
+thirdLable = "Trois"
+
+buttonLabels : List String
+buttonLabels = [ firstLable, secondLable, thirdLable ]
+
+
+animatedButton : Model -> String -> Element Msg
+animatedButton model label =
+    let
+        buttonState =
+            Maybe.withDefault Default <| Dict.get label <| Animator.current model.buttonStates
+
+        borderColor =
+            fromRgb <| Color.toRgba <|
+                if buttonState == Hover then
+                    Color.blue
+                else
+                    Color.black
+
+        fontColor =
+            fromRgb <| Color.toRgba <|
+                if buttonState == Hover then
+                    Color.white
+                else
+                    Color.black
+
+        bgColor =
+            fromRgb <| Color.toRgba <|
+                Animator.color model.buttonStates <|
+                    \buttonStates ->
+                        if (Maybe.withDefault Default <| Dict.get label buttonStates) == Hover then
+                            Color.lightBlue
+                        else
+                            Color.white
+
+        fontSize =
+            round <| Animator.linear model.buttonStates <|
+                \buttonStates ->
+                    Animator.at <|
+                        if (Maybe.withDefault Default <| Dict.get label buttonStates) == Hover then
+                            28
+                        else
+                            20
+
+        buttonElement =
+            el
+                [ width <| px 200
+                , height <| px 60
+                , Border.width 3
+                , Border.rounded 6
+                , Border.color borderColor
+                , Background.color bgColor
+                , Font.color fontColor
+                , Font.size fontSize
+                , padding 10
+                , onMouseEnter <| UserHoveredButton label
+                , onMouseLeave <| UserUnhoveredButton label
+                ]
+            <| el [ centerX, centerY ] <| text <| "Button " ++ label
+    in
+    buttonElement
+
+animatedButtons : Model -> List String -> Element Msg
+animatedButtons model lables =
+    List.map (animatedButton model) lables
+        |> column [ spacing 10, centerX, centerY ]
